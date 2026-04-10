@@ -1,68 +1,64 @@
+from dash import ctx
 from dash.dependencies import Input, Output, State
 from flask import session
 
 from services.auth_service import authenticate_user
-
 from ui.pages.login import login_layout
 from ui.pages.admin import admin_layout
 from ui.pages.apartment import apartment_layout
 from ui.pages.vendor import vendor_layout
 from ui.pages.security import security_layout
-from dash.exceptions import PreventUpdate
-from flask import session
+
 
 def register_auth_callbacks(app):
 
     # -----------------------
-    # LOGIN ACTION
+    # AUTH HANDLER (LOGIN + LOGOUT)
     # -----------------------
     @app.callback(
         Output("session", "data"),
-        Output("url", "pathname"),   # 👈 redirect
+        Output("url", "pathname"),
         Output("login-output", "children"),
         Input("login-btn", "n_clicks"),
+        Input("logout-btn", "n_clicks"),
         State("login-email", "value"),
         State("login-password", "value"),
         prevent_initial_call=True
     )
-    def login(n, email, password):
+    def auth_handler(login_click, logout_click, email, password):
 
-        user = authenticate_user(email, password)
+        trigger = ctx.triggered_id
 
-        if not user:
-            return None, "/", "❌ Invalid credentials"
+        # 🔴 LOGOUT
+        if trigger == "logout-btn":
+            session.clear()
+            return None, "/", ""
 
-        session["user"] = user
+        # 🔴 LOGIN
+        if trigger == "login-btn":
+            user = authenticate_user(email, password)
 
-        # redirect based on role
-        role = user["role"]
+            if not user:
+                return None, "/", "❌ Invalid credentials"
 
-        if role == "admin":
-            return user, "/admin", "✅ Login successful"
+            session["user"] = user
 
-        if role == "apartment":
-            return user, "/apartment", "✅ Login successful"
+            role = user["role"]
 
-        if role == "vendor":
-            return user, "/vendor", "✅ Login successful"
+            if role == "admin":
+                return user, "/admin", "✅ Login"
 
-        if role == "security":
-            return user, "/security", "✅ Login successful"
+            if role == "apartment":
+                return user, "/apartment", "✅ Login"
 
-        return user, "/", "✅ Login"
-    
-    @app.callback(
-        Output("session", "data"),
-        Output("url", "pathname"),
-        Input("logout-btn", "n_clicks"),
-        prevent_initial_call=True
-    )
-    def logout(n):
+            if role == "vendor":
+                return user, "/vendor", "✅ Login"
 
-        from flask import session
-        session.clear()
+            if role == "security":
+                return user, "/security", "✅ Login"
 
-        return None, "/"
+        return None, "/", ""
+
 
     # -----------------------
     # ROUTING
@@ -74,36 +70,21 @@ def register_auth_callbacks(app):
     )
     def route(path, session_data):
 
-        # 🔴 ALWAYS handle None path
-        if not path:
-            path = "/"
-
-        # 🔴 If NOT logged in → show login ALWAYS
         if not session_data:
             return login_layout()
 
         role = session_data.get("role")
 
-        # 🔴 ROLE PROTECTION
         if path == "/admin":
-            if role != "admin":
-                return "❌ Unauthorized"
-            return admin_layout()
+            return admin_layout() if role == "admin" else "❌ Unauthorized"
 
-        elif path == "/apartment":
-            if role != "apartment":
-                return "❌ Unauthorized"
-            return apartment_layout()
+        if path == "/apartment":
+            return apartment_layout() if role == "apartment" else "❌ Unauthorized"
 
-        elif path == "/vendor":
-            if role != "vendor":
-                return "❌ Unauthorized"
-            return vendor_layout()
+        if path == "/vendor":
+            return vendor_layout() if role == "vendor" else "❌ Unauthorized"
 
-        elif path == "/security":
-            if role != "security":
-                return "❌ Unauthorized"
-            return security_layout()
+        if path == "/security":
+            return security_layout() if role == "security" else "❌ Unauthorized"
 
-        # 🔴 DEFAULT (IMPORTANT)
         return login_layout()
