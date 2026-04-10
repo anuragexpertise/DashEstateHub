@@ -1,8 +1,8 @@
 from flask import Flask
 from dash import Dash, html, dcc
 
-from ui.layout import serve_layout
-from ui.callbacks import register_callbacks
+# from ui.layout import serve_layout
+# from ui.callbacks import register_callbacks
 
 server = Flask(__name__)
 
