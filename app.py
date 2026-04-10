@@ -22,20 +22,26 @@ from db import get_db
 
 @server.route("/test-db")
 def test_db():
-    try:
-        db = get_db()
-        cur = db.cursor()
+    return f"""
+            Host: {os.getenv('PGHOST')}
+            User: {os.getenv('PGUSER')}
+            DB: {os.getenv('PGDATABASE')}
+            """
+    # try:
+        
+    #     db = get_db()
+    #     cur = db.cursor()
 
-        cur.execute("SELECT 1;")
-        result = cur.fetchone()
+    #     cur.execute("SELECT 1;")
+    #     result = cur.fetchone()
 
-        cur.close()
-        db.close()
+    #     cur.close()
+    #     db.close()
 
-        return f"DB OK: {result}"
+    #     return f"DB OK: {result}"
 
-    except Exception as e:
-        return f"DB ERROR: {str(e)}"
+    # except Exception as e:
+    #     return f"DB ERROR: {str(e)}"
 
 # -----------------------------
 app.layout = serve_layout
