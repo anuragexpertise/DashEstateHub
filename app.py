@@ -1,7 +1,7 @@
 from flask import Flask
 from dash import Dash
-from dash import html
-
+from ui.layout import create_layout
+from ui.callbacks import register_callbacks
 
 server = Flask(__name__)
 
@@ -11,12 +11,14 @@ app = Dash(
     suppress_callback_exceptions=True
 )
 
+# ✅ Attach layout
+app.layout = create_layout()
 
-app.layout = html.Div([
-    html.H1("EstateHub Running ✅")
-])
+# ✅ Register callbacks
+register_callbacks(app)
 
-# expose Flask server for Gunicorn
+# expose server
 server = app.server
+
 if __name__ == "__main__":
     server.run(host="0.0.0.0", port=10000)
