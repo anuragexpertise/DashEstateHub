@@ -1,8 +1,5 @@
 from flask import Flask
-from dash import Dash, html, dcc
-
-# from ui.layout import serve_layout
-# from ui.callbacks import register_callbacks
+from dash import Dash
 
 server = Flask(__name__)
 
@@ -12,7 +9,8 @@ app = Dash(
     suppress_callback_exceptions=True
 )
 
+# expose Flask server for Gunicorn
 server = app.server
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    server.run(host="0.0.0.0", port=10000)
