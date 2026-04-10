@@ -15,7 +15,6 @@ def register_security_callbacks(app):
             return ""
 
         role, entity_id = parse_qr(qr)
-
         result = handle_scan(1, role, entity_id)
 
         if result == "PASS":

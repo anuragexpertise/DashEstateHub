@@ -24,4 +24,4 @@ def register_callbacks(app):
         elif path == "/security":
             return security_layout()
 
-        return "Login Page (to be added)"
+        return "Login Page (Coming Soon)"
