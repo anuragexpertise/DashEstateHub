@@ -11,7 +11,7 @@ from ui.pages.security import security_layout
 from dash.exceptions import PreventUpdate
 from flask import session
 
-def register_callbacks(app):
+def register_auth_callbacks(app):
 
     # -----------------------
     # LOGIN ACTION
@@ -74,36 +74,36 @@ def register_callbacks(app):
     )
     def route(path, session_data):
 
-        # 🔴 No session → force login
+        # 🔴 ALWAYS handle None path
+        if not path:
+            path = "/"
+
+        # 🔴 If NOT logged in → show login ALWAYS
         if not session_data:
             return login_layout()
 
-        role = session_data["role"]
+        role = session_data.get("role")
 
-        # 🔴 Role-based protection
-        if path == "/admin" and role != "admin":
-            return "❌ Unauthorized"
-
-        if path == "/apartment" and role != "apartment":
-            return "❌ Unauthorized"
-
-        if path == "/vendor" and role != "vendor":
-            return "❌ Unauthorized"
-
-        if path == "/security" and role != "security":
-            return "❌ Unauthorized"
-
-        # 🔴 Valid routing
+        # 🔴 ROLE PROTECTION
         if path == "/admin":
+            if role != "admin":
+                return "❌ Unauthorized"
             return admin_layout()
 
         elif path == "/apartment":
+            if role != "apartment":
+                return "❌ Unauthorized"
             return apartment_layout()
 
         elif path == "/vendor":
+            if role != "vendor":
+                return "❌ Unauthorized"
             return vendor_layout()
 
         elif path == "/security":
+            if role != "security":
+                return "❌ Unauthorized"
             return security_layout()
 
+        # 🔴 DEFAULT (IMPORTANT)
         return login_layout()

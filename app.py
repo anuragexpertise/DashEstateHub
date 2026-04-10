@@ -2,7 +2,7 @@ from flask import Flask
 from dash import Dash
 
 from ui.layout import serve_layout
-from ui.callbacks.auth_callbacks import register_callbacks
+from ui.callbacks.auth_callbacks import register_auth_callbacks
 from ui.callbacks.admin_callbacks import register_admin_callbacks
 from ui.callbacks.security_callbacks import register_security_callbacks
 
@@ -16,7 +16,7 @@ app = Dash(
 
 app.layout = serve_layout
 
-register_callbacks(app)
+register_auth_callbacks(app)
 register_admin_callbacks(app)
 register_security_callbacks(app)
 
