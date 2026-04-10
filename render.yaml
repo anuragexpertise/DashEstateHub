@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: estatehub
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:server"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10
+      - key: SECRET_KEY
+        value: Iamagoodboy#@!9453
