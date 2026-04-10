@@ -8,13 +8,36 @@ from ui.callbacks.security_callbacks import register_security_callbacks
 from dotenv import load_dotenv
 load_dotenv()
 server = Flask(__name__)
+server.secret_key = os.getenv("SECRET_KEY")
 
 app = Dash(
     __name__,
     server=server,
     suppress_callback_exceptions=True
 )
+# -----------------------------
+# ✅ ADD DB TEST ROUTE HERE
+# -----------------------------
+from db import get_db
 
+@server.route("/test-db")
+def test_db():
+    try:
+        db = get_db()
+        cur = db.cursor()
+
+        cur.execute("SELECT 1;")
+        result = cur.fetchone()
+
+        cur.close()
+        db.close()
+
+        return f"DB OK: {result}"
+
+    except Exception as e:
+        return f"DB ERROR: {str(e)}"
+
+# -----------------------------
 app.layout = serve_layout
 
 register_auth_callbacks(app)
