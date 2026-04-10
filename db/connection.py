@@ -1,7 +1,7 @@
 import os
 import psycopg2
 
-def get_connection():
+def get_db():
     return psycopg2.connect(
         host=os.getenv("PGHOST"),
         database=os.getenv("PGDATABASE"),
