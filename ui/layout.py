@@ -7,7 +7,7 @@ def serve_layout():
         dcc.Location(id='url'),
 
         # 🔴 SESSION STORAGE
-        dcc.Store(id='session', storage_type='session'),
+        dcc.Store(id='session', storage_type='session', data=None),
 
         navbar(),
 
