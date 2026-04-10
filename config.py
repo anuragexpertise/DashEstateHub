@@ -7,4 +7,4 @@ class Config:
     DB_NAME = "pfmnthyc_estatehub"
     SECRET_KEY = "Iamagoodboy#@!9453"
 
-    UPLOAD_FOLDER = "uploads"
+    UPLOAD_FOLDER = "/tmp/uploads"
