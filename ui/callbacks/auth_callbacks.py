@@ -53,12 +53,16 @@ def register_callbacks(app):
     
     @app.callback(
         Output("session", "data"),
+        Output("url", "pathname"),
         Input("logout-btn", "n_clicks"),
         prevent_initial_call=True
     )
     def logout(n):
+
+        from flask import session
         session.clear()
-        return None
+
+        return None, "/"
 
     # -----------------------
     # ROUTING
