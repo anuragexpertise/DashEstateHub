@@ -1,24 +1,48 @@
 from flask import Flask
 from dash import Dash
-from ui.layout import create_layout
-from ui.callbacks import register_callbacks
 
+# Layout
+from ui.layout import serve_layout
+
+# Callbacks
+from ui.callbacks.auth_callbacks import register_callbacks
+from ui.callbacks.security_callbacks import register_security_callbacks
+from ui.callbacks.admin_callbacks import register_admin_callbacks
+
+# -----------------------
+# Flask server
+# -----------------------
 server = Flask(__name__)
 
+# -----------------------
+# Dash app
+# -----------------------
 app = Dash(
     __name__,
     server=server,
     suppress_callback_exceptions=True
 )
 
-# ✅ Attach layout
-app.layout = create_layout()
+# -----------------------
+# Layout (FUNCTION, not call)
+# -----------------------
+app.layout = serve_layout
 
-# ✅ Register callbacks
+# -----------------------
+# Register ALL callbacks
+# -----------------------
 register_callbacks(app)
+register_security_callbacks(app)
+register_admin_callbacks(app)
 
-# expose server
+# -----------------------
+# Expose for Gunicorn
+# -----------------------
 server = app.server
 
+# -----------------------
+# Local run
+# -----------------------
 if __name__ == "__main__":
-    server.run(host="0.0.0.0", port=10000)
+    app.run_server(debug=True, host="0.0.0.0", port=10000)
+
