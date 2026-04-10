@@ -1,15 +1,12 @@
 from flask import Flask
 from dash import Dash
-
+import os
 from ui.layout import serve_layout
 from ui.callbacks.auth_callbacks import register_auth_callbacks
 from ui.callbacks.admin_callbacks import register_admin_callbacks
 from ui.callbacks.security_callbacks import register_security_callbacks
 from dotenv import load_dotenv
 load_dotenv()
-# import os
-# print("DB_HOST:", os.getenv("DB_HOST"))
-# print("SECRET_KEY:", os.getenv("SECRET_KEY"))
 server = Flask(__name__)
 
 app = Dash(
