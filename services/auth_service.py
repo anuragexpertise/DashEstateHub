@@ -1,27 +1,33 @@
 from db import get_db
-from utils.hash_utils import verify_password
+from werkzeug.security import check_password_hash
 
-def login_email(email, password):
+def authenticate_user(email, password):
+
     db = get_db()
     cur = db.cursor()
 
-    cur.execute("SELECT * FROM users WHERE email=%s", (email,))
+    cur.execute("""
+        SELECT id, role, password_hash, society_id, linked_id
+        FROM users
+        WHERE email = %s AND active = TRUE
+    """, (email,))
+
     user = cur.fetchone()
 
-    if user and verify_password(password, user['password_hash']):
-        return user
+    cur.close()
+    db.close()
 
-    return None
+    if not user:
+        return None
 
+    user_id, role, password_hash, society_id, linked_id = user
 
-def login_pin(user_id, pin_hash_input):
-    db = get_db()
-    cur = db.cursor()
+    if not check_password_hash(password_hash, password):
+        return None
 
-    cur.execute("SELECT * FROM users WHERE id=%s", (user_id,))
-    user = cur.fetchone()
-
-    if user and user['pin_hash'] == pin_hash_input:
-        return user
-
-    return None
+    return {
+        "user_id": user_id,
+        "role": role,
+        "society_id": society_id,
+        "linked_id": linked_id
+    }

@@ -3,11 +3,12 @@ import psycopg2
 
 def get_connection():
     return psycopg2.connect(
-        host=os.getenv("DB_HOST"),
-        database=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        sslmode="require"
+        host=os.getenv("PGHOST"),
+        database=os.getenv("PGDATABASE"),
+        user=os.getenv("PGUSER"),
+        password=os.getenv("PGPASSWORD"),
+        sslmode="require",
+        channel_binding="require"
     )
 # PGHOST='ep-long-frog-a1asxc6t-pooler.ap-southeast-1.aws.neon.tech'
 # PGDATABASE='neondb'
