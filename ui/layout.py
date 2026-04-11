@@ -7,7 +7,7 @@ def serve_layout():
         dcc.Store(id="session"),
         dcc.Store(id="toast-store"),
 
-        # Toast container
+        # Toast
         html.Div(id="toast-container", style={
             "position": "fixed",
             "top": "20px",
@@ -15,13 +15,14 @@ def serve_layout():
             "zIndex": "9999"
         }),
 
+        # Navbar
         html.Div(id="navbar"),
+
+        # Page content
         html.Div(id="page-content")
 
     ],
-    # ✅ APPLY GLOBAL STYLE HERE (OUTERMOST DIV)
     style={
-        "fontFamily": "Segoe UI",
-        "backgroundColor": "#f5f7fa",
+        "fontFamily": "Segoe UI, sans-serif",
         "minHeight": "100vh"
     })
