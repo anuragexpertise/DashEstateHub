@@ -1,11 +1,12 @@
 from dash import Input, Output, State
-from flask import session
+from dash import html
 
 from services.auth_service import authenticate_user
+from services.dashboard_service import get_dashboard_metrics
 
-# Page layouts
+# Pages
 from ui.pages.login import login_layout
-from ui.pages.admin import admin_layout
+from ui.pages.admin import admin_layout_dynamic
 from ui.pages.apartment import apartment_layout
 from ui.pages.vendor import vendor_layout
 from ui.pages.security import security_layout
@@ -14,9 +15,9 @@ from ui.pages.master_admin import layout as master_admin_layout
 
 def register_auth_callbacks(app):
 
-    # =========================================================
-    # 🔐 LOGIN HANDLER (ONLY PLACE THAT SETS TOAST)
-    # =========================================================
+    # ===================================
+    # LOGIN HANDLER
+    # ===================================
     @app.callback(
         Output("session", "data"),
         Output("url", "pathname"),
@@ -28,65 +29,46 @@ def register_auth_callbacks(app):
     )
     def login_handler(n_clicks, email, password):
 
-        if not n_clicks:
-            return None, "/", None
-
         user = authenticate_user(email, password)
 
-        # ❌ INVALID LOGIN
         if not user:
             return None, "/", {
                 "type": "error",
                 "message": "Invalid credentials"
             }
 
-        # ✅ STORE SESSION
-        session["user"] = user
+        role = user["role"]
+        society_id = user["society_id"]
 
-        role = user.get("role")
-        society_id = user.get("society_id")
-
-        # 🟢 MASTER ADMIN
+        # MASTER ADMIN
         if role == "admin" and society_id == 0:
             return user, "/master", {
                 "type": "success",
-                "message": "Master Admin login successful"
+                "message": "Master Admin login"
             }
 
-        # 🟢 ROLE ROUTING
+        # ADMIN
         if role == "admin":
             return user, "/admin", {
                 "type": "success",
                 "message": "Login successful"
             }
 
+        # OTHER ROLES
         if role == "apartment":
-            return user, "/apartment", {
-                "type": "success",
-                "message": "Login successful"
-            }
+            return user, "/apartment", {"type": "success", "message": "Welcome"}
 
         if role == "vendor":
-            return user, "/vendor", {
-                "type": "success",
-                "message": "Login successful"
-            }
+            return user, "/vendor", {"type": "success", "message": "Welcome"}
 
         if role == "security":
-            return user, "/security", {
-                "type": "success",
-                "message": "Login successful"
-            }
+            return user, "/security", {"type": "success", "message": "Welcome"}
 
-        # fallback
-        return None, "/", {
-            "type": "error",
-            "message": "Unauthorized role"
-        }
+        return None, "/", {"type": "error", "message": "Unauthorized"}
 
-    # =========================================================
-    # 🌐 ROUTING + LOGOUT (NO TOAST HERE → avoids duplication)
-    # =========================================================
+    # ===================================
+    # ROUTER (ONLY ONE OWNER)
+    # ===================================
     @app.callback(
         Output("page-content", "children"),
         Input("url", "pathname"),
@@ -94,47 +76,50 @@ def register_auth_callbacks(app):
     )
     def route_handler(pathname, session_data):
 
-        # 🔴 LOGOUT
+        print("PATH:", pathname)
+        print("SESSION:", session_data)
+
+        # LOGOUT
         if pathname == "/logout":
-            session.clear()
             return login_layout()
 
-        # 🔴 NOT LOGGED IN
+        # NOT LOGGED IN
         if not session_data:
             return login_layout()
 
         role = session_data.get("role")
         society_id = session_data.get("society_id")
 
-        # 🟢 MASTER ADMIN
+        # MASTER ADMIN
         if pathname == "/master":
             if role == "admin" and society_id == 0:
                 return master_admin_layout
             return "❌ Unauthorized"
 
-        # 🟢 ADMIN
+        # ADMIN DASHBOARD
         if pathname == "/admin":
             if role == "admin":
-                return admin_layout()
+                try:
+                    data = get_dashboard_metrics(society_id)
+                    return admin_layout_dynamic(data)
+                except Exception as e:
+                    print("DASHBOARD ERROR:", e)
+
+                    # 🔴 FALLBACK UI (prevents white screen)
+                    return html.Div([
+                        html.H3("Dashboard Error"),
+                        html.Div(str(e))
+                    ])
             return "❌ Unauthorized"
 
-        # 🟢 APARTMENT
+        # OTHER ROLES
         if pathname == "/apartment":
-            if role == "apartment":
-                return apartment_layout()
-            return "❌ Unauthorized"
+            return apartment_layout()
 
-        # 🟢 VENDOR
         if pathname == "/vendor":
-            if role == "vendor":
-                return vendor_layout()
-            return "❌ Unauthorized"
+            return vendor_layout()
 
-        # 🟢 SECURITY
         if pathname == "/security":
-            if role == "security":
-                return security_layout()
-            return "❌ Unauthorized"
+            return security_layout()
 
-        # 🟡 DEFAULT
         return login_layout()

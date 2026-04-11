@@ -1,39 +1,95 @@
 from dash import html, dcc
-from ui.components.kpi_cards import kpi_card
 
+# ======================
+# STYLES
+# ======================
+ROW_STYLE = {
+    "display": "flex",
+    "gap": "20px",
+    "marginBottom": "20px",
+    "flexWrap": "wrap"
+}
+
+CARD_STYLE = {
+    "flex": "1",
+    "minWidth": "200px",
+    "padding": "20px",
+    "borderRadius": "12px",
+    "background": "rgba(255,255,255,0.15)",
+    "backdropFilter": "blur(10px)",
+    "boxShadow": "0 4px 20px rgba(0,0,0,0.2)"
+}
+
+PANEL_STYLE = {
+    "flex": "1",
+    "padding": "20px",
+    "borderRadius": "12px",
+    "background": "rgba(255,255,255,0.1)",
+    "backdropFilter": "blur(8px)"
+}
+
+# ======================
+# COMPONENTS
+# ======================
+def kpi_card(title, value):
+    return html.Div([
+        html.H4(title),
+        html.H2(value)
+    ], style=CARD_STYLE)
+
+
+def action_card(title, link):
+    return dcc.Link(
+        html.Div(title, style=CARD_STYLE),
+        href=link
+    )
+
+# ======================
+# STATIC FALLBACK (SAFE)
+# ======================
 def admin_layout():
+    return html.Div("Loading Dashboard...", style={"padding": "20px"})
+
+
+# ======================
+# DYNAMIC DASHBOARD
+# ======================
+def admin_layout_dynamic(data):
+
     return html.Div([
 
-        html.H2("Admin Dashboard"),
+        # HEADER
+        html.H2("Admin Dashboard", style={"marginBottom": "20px"}),
 
+        # KPI ROW
         html.Div([
-            kpi_card("Total Revenue", "₹0"),
-            kpi_card("Pending Dues", "₹0"),
-            kpi_card("Vendors", "0"),
-            kpi_card("Security Staff", "0"),
-        ]),
+            kpi_card("Total Dues", f"₹ {data.get('dues', 0)}"),
+            kpi_card("Collected", f"₹ {data.get('collected', 0)}"),
+            kpi_card("Active Vendors", data.get("vendors", 0)),
+            kpi_card("Gate Entries Today", data.get("entries", 0)),
+        ], style=ROW_STYLE),
 
-        dcc.Tabs([
+        # ACTIONS
+        html.Div([
+            action_card("➕ Add Apartment", "/apartments"),
+            action_card("🏢 Manage Society", "/create-society"),
+            action_card("💰 Charges & Fines", "/charges"),
+            action_card("📊 Accounts", "/accounts"),
+        ], style=ROW_STYLE),
 
-            dcc.Tab(label="Cashbook", children=[
-                html.Div(id="cashbook-table")
-            ]),
+        # PANELS
+        html.Div([
 
-            dcc.Tab(label="Ledger", children=[
-                html.Div(id="ledger-table")
-            ]),
+            html.Div([
+                html.H4("🚪 Gate Activity"),
+                html.Div("No recent entries")
+            ], style=PANEL_STYLE),
 
-            dcc.Tab(label="Accounts", children=[
-                html.Div(id="accounts-table")
-            ]),
+            html.Div([
+                html.H4("💳 Recent Payments"),
+                html.Div("No recent payments")
+            ], style=PANEL_STYLE),
 
-            dcc.Tab(label="Charges & Fines", children=[
-                html.Div(id="charges-table")
-            ]),
+        ], style=ROW_STYLE)
 
-            dcc.Tab(label="Settings", children=[
-                html.Div("Society Settings Here")
-            ])
-
-        ])
     ], style={"padding": "20px"})

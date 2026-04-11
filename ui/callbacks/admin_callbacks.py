@@ -1,6 +1,7 @@
 from dash import Input, Output, State
 from services.society_service import create_society
 from services.accounts_service import process_accounts_upload
+from services.dashboard_service import get_dashboard_metrics
 
 def register_admin_callbacks(app):
 
@@ -48,3 +49,5 @@ def register_admin_callbacks(app):
         society_id = session.get("society_id")
 
         return process_accounts_upload(contents, society_id)
+    
+    
