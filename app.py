@@ -53,7 +53,7 @@ app = Dash(
 )
 def update_navbar(session):
     return get_navbar(session)
-app.layout = serve_layout
+app.layout = serve_layout()
 
 register_auth_callbacks(app)
 register_admin_callbacks(app)

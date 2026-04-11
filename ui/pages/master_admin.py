@@ -1,20 +1,32 @@
 from dash import html, dcc
 
-layout = html.Div([
-    html.H2("Create Society"),
+def layout():
 
-    dcc.Input(id="soc-name", placeholder="Society Name"),
-    dcc.Input(id="soc-email", placeholder="Email"),
-    dcc.Input(id="soc-phone", placeholder="Phone"),
-    dcc.Input(id="soc-address", placeholder="Address"),
+    return html.Div([
 
-    dcc.Input(id="soc-sec-name", placeholder="Secretary Name"),
-    dcc.Input(id="soc-sec-phone", placeholder="Secretary Phone"),
+        html.H2("🏢 Society Management"),
 
-    dcc.DatePickerSingle(id="soc-plan-validity"),
-    dcc.DatePickerSingle(id="soc-arrear-date"),
+        # =========================
+        # CREATE FORM
+        # =========================
+        html.Div([
 
-    html.Button("Create Society", id="create-society-btn"),
+            dcc.Input(id="soc-name", placeholder="Society Name"),
+            dcc.Input(id="soc-email", placeholder="Society Email"),
+            dcc.Input(id="soc-phone", placeholder="Phone"),
 
-    html.Div(id="society-output")
-])
+            dcc.Input(id="admin-email", placeholder="Admin Email"),
+            dcc.Input(id="admin-password", placeholder="Admin Password", type="password"),
+
+            html.Button("Create Society", id="create-soc-btn")
+
+        ], style={"display": "grid", "gap": "10px", "maxWidth": "400px"}),
+
+        html.Hr(),
+
+        # =========================
+        # LIST
+        # =========================
+        html.Div(id="society-list")
+
+    ], style={"padding": "20px"})

@@ -1,8 +1,7 @@
-from dash import Input, Output, State
-from services.society_service import create_society
+from dash import Input, Output, State, html
 from services.accounts_service import process_accounts_upload
 from services.dashboard_service import get_dashboard_metrics
-
+from services.society_service import create_society_full, get_societies
 def register_admin_callbacks(app):
 
     @app.callback(
@@ -33,7 +32,7 @@ def register_admin_callbacks(app):
             "arrear_start_date": arrear
         }
 
-        sid = create_society(data)
+        sid = create_society_full(data)
 
         return f"Society Created with ID: {sid}"
     
@@ -50,4 +49,35 @@ def register_admin_callbacks(app):
 
         return process_accounts_upload(contents, society_id)
     
-    
+    @app.callback(
+        Output("society-list", "children"),
+        Input("create-soc-btn", "n_clicks"),
+        State("soc-name", "value"),
+        State("soc-email", "value"),
+        State("soc-phone", "value"),
+        State("admin-email", "value"),
+        State("admin-password", "value"),
+        prevent_initial_call=True
+    )
+    def handle_create(n, name, email, phone, admin_email, admin_password):
+
+        if not name or not admin_email or not admin_password:
+            return "❌ Missing required fields"
+
+        result = create_society_full({
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "admin_email": admin_email,
+            "admin_password": admin_password,
+            "validity": "2026-12-31"
+        })
+
+        if result["status"] == "error":
+            return f"❌ {result['message']}"
+
+        societies = get_societies()
+
+        return html.Div([
+            html.Div(f"{s[0]} | {s[1]}") for s in societies
+        ])

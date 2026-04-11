@@ -1,6 +1,6 @@
 from db import get_db
 
-def create_society(data):
+def create_society_full(data):
     db = get_db()
     cur = db.cursor()
 

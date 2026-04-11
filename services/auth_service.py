@@ -9,7 +9,7 @@ def authenticate_user(email, password):
     cur.execute("""
         SELECT id, role, password_hash, society_id, linked_id
         FROM users
-        WHERE email = %s AND active = TRUE
+        WHERE email = %s
     """, (email,))
 
     user = cur.fetchone()

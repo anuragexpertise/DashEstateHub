@@ -4,7 +4,7 @@ def serve_layout():
     return html.Div([
 
         dcc.Location(id="url"),
-        dcc.Store(id="session"),
+        dcc.Store(id="session", storage_type="session"),
         dcc.Store(id="toast-store"),
 
         # Toast

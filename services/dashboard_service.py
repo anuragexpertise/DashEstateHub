@@ -8,7 +8,7 @@ def get_dashboard_metrics(society_id):
     cur.execute("SELECT COALESCE(SUM(amount),0) FROM transactions WHERE society_id=%s", (society_id,))
     total_dues = cur.fetchone()[0]
 
-    cur.execute("SELECT COUNT(*) FROM vendor WHERE society_id=%s", (society_id,))
+    cur.execute("SELECT COUNT(*) FROM vendors WHERE society_id=%s", (society_id,))
     vendors = cur.fetchone()[0]
 
     return {
