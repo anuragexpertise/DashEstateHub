@@ -1,15 +1,27 @@
 from dash import html, dcc
-from ui.components.navbar import navbar
 
 def serve_layout():
     return html.Div([
 
-        dcc.Location(id='url'),
+        dcc.Location(id="url"),
+        dcc.Store(id="session"),
+        dcc.Store(id="toast-store"),
 
-        # 🔴 SESSION STORAGE
-        dcc.Store(id='session', storage_type='session', data=None),
+        # Toast container
+        html.Div(id="toast-container", style={
+            "position": "fixed",
+            "top": "20px",
+            "right": "20px",
+            "zIndex": "9999"
+        }),
 
-        navbar(),
+        html.Div(id="navbar"),
+        html.Div(id="page-content")
 
-        html.Div(id='page-content')
-    ])
+    ],
+    # ✅ APPLY GLOBAL STYLE HERE (OUTERMOST DIV)
+    style={
+        "fontFamily": "Segoe UI",
+        "backgroundColor": "#f5f7fa",
+        "minHeight": "100vh"
+    })

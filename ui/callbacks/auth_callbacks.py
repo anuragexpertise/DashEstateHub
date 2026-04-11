@@ -18,7 +18,7 @@ def register_auth_callbacks(app):
     @app.callback(
         Output("session", "data"),
         Output("url", "pathname"),
-        Output("login-output", "children"),
+        Output("toast-store","data"),
         Input("login-btn", "n_clicks"),
         Input("logout-btn", "n_clicks"),
         State("login-email", "value"),
@@ -32,33 +32,32 @@ def register_auth_callbacks(app):
         # 🔴 LOGOUT
         if trigger == "logout-btn":
             session.clear()
-            return None, "/", ""
+            return None, "/", {"type": "success", "message": "Logged out successfully"}
 
         # 🔴 LOGIN
         if trigger == "login-btn":
             user = authenticate_user(email, password)
 
             if not user:
-                return None, "/", "❌ Invalid credentials"
+                return None, "/", {"type": "error", "message": "Invalid credentials"}
 
             session["user"] = user
 
             role = user["role"]
 
             if role == "admin":
-                return user, "/admin", "✅ Login"
+                return user, "/admin", {"type": "success", "message": "Login successful"}
 
             if role == "apartment":
-                return user, "/apartment", "✅ Login"
+                return user, "/apartment", {"type": "success", "message": "Login successful"}
 
             if role == "vendor":
-                return user, "/vendor", "✅ Login"
+                return user, "/vendor", {"type": "success", "message": "Login successful"}
 
             if role == "security":
-                return user, "/security", "✅ Login"
+                return user, "/security", {"type": "success", "message": "Login successful"}
 
-        return None, "/", ""
-
+        return None, "/", {"type": "error", "message": "An error occurred during authentication"}
 
     # -----------------------
     # ROUTING
