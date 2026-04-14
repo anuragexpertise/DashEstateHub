@@ -11,7 +11,7 @@ def get_navbar(session):
     links = []
 
     # MASTER ADMIN
-    if role == "admin" and society_id == 0:
+    if role == "admin" and society_id is None:
         links += [
             dcc.Link("Dashboard", href="/master", className="nav-item"),
             dcc.Link("Societies", href="/create-society", className="nav-item"),
