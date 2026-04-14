@@ -19,7 +19,7 @@ app = Dash(
 # -----------------------------
 # ✅ ADD DB TEST ROUTE HERE
 # -----------------------------
-# from db import get_db
+from db import get_db
 
 # @server.route("/test-db")
 # def test_db():
