@@ -13,6 +13,6 @@ def get_db():
         user=os.getenv("PGUSER"),
         password=os.getenv("PGPASSWORD"),
         cursor_factory=RealDictCursor,
-        sslmode="require",
-        channel_binding="require"
+        sslmode="require"
+        # channel_binding="require"
     )

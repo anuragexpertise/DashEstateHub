@@ -126,6 +126,8 @@ def get_society_details(society_id):
     """, (society_id,))
 
     row = cur.fetchone()
+    if not row:
+        raise ValueError(f"Society {society_id} not found")
 
     cur.close()
     db.close()

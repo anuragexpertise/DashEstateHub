@@ -37,18 +37,18 @@ def society_select_layout(societies_list=None, error_message=None, show_master_l
             }
         ),
         # Background overlay
-        # html.Div(style={
-        #     "position": "fixed",
-        #     "top": "0",
-        #     "left": "0",
-        #     "width": "100%",
-        #     "height": "100%",
-        #     "backgroundImage": "url('/assets/estate_management_light.jpg')",
-        #     "backgroundSize": "cover",
-        #     "backgroundPosition": "center",
-        #     "filter": "brightness(0.6)",
-        #     "zIndex": "-1"
-        # }),
+        html.Div(style={
+            "position": "fixed",
+            "top": "0",
+            "left": "0",
+            "width": "100%",
+            "height": "100%",
+            "backgroundImage": "url('/assets/estate_management_light.jpg')",
+            "backgroundSize": "cover",
+            "backgroundPosition": "center",
+            "filter": "brightness(0.6)",
+            "zIndex": "-1"
+        }),
 
         # Main card
         html.Div([

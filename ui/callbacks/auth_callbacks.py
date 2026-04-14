@@ -232,7 +232,7 @@ def register_auth_callbacks(app):
         user["authenticated"] = True
         
         # Store preferences in local cookie-store
-        cookie_data = {"email": email, "society_id": society_id, "method": "password"} if remember else dash.no_update
+        cookie_data = {"email": email, "society_id": society_id, "method": "pattern"} if remember else dash.no_update
 
         if user.get("role") == "admin" and user.get("society_id") is None:
             return user, "/master", {"type": "success", "message": "Master Admin Login"}, cookie_data
