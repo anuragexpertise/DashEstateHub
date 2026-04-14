@@ -5,7 +5,7 @@ from services.society_service import create_society_full, get_societies
 def register_admin_callbacks(app):
 
     @app.callback(
-        Output("society-output", "children"),
+        Output("society-list", "children"),
         Input("create-society-btn", "n_clicks"),
         State("soc-name", "value"),
         State("soc-email", "value"),
@@ -14,9 +14,11 @@ def register_admin_callbacks(app):
         State("soc-sec-name", "value"),
         State("soc-sec-phone", "value"),
         State("soc-plan-validity", "date"),
-        State("soc-arrear-date", "date")
+        State("soc-arrear-date", "date"),
+        State("admin-email", "value"),
+        State("admin-password", "value")
     )
-    def create_soc(n, name, email, phone, address, sec_name, sec_phone, validity, arrear):
+    def create_soc(n, name, email, phone, address, sec_name, sec_phone, validity, arrear, admin_email, admin_password):
         if not n:
             return ""
 
@@ -25,11 +27,13 @@ def register_admin_callbacks(app):
             "email": email,
             "phone": phone,
             "address": address,
-            "secretary_name": sec_name,
-            "secretary_phone": sec_phone,
+            "sec_name": sec_name,
+            "sec_phone": sec_phone,
             "plan": "Free",
-            "plan_validity": validity,
-            "arrear_start_date": arrear
+            "validity": validity,
+            "arrear": arrear,
+            "admin_email": admin_email,
+            "admin_password": admin_password
         }
 
         sid = create_society_full(data)

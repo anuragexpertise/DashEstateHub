@@ -113,3 +113,21 @@ def get_societies():
     db.close()
 
     return rows
+
+def get_society_details(society_id):
+
+    db = get_db()
+    cur = db.cursor()
+
+    cur.execute("""
+        SELECT id, name, email, phone, address, logo, background
+        FROM societies
+        WHERE id = %s
+    """, (society_id,))
+
+    row = cur.fetchone()
+
+    cur.close()
+    db.close()
+
+    return row

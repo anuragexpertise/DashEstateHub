@@ -1,5 +1,10 @@
 import os
 import psycopg2
+from psycopg2.extras import RealDictCursor
+from dotenv import load_dotenv
+
+# Load environment variables from .env for PostgreSQL connection configuration
+load_dotenv()
 
 def get_db():
     return psycopg2.connect(
@@ -7,12 +12,7 @@ def get_db():
         database=os.getenv("PGDATABASE"),
         user=os.getenv("PGUSER"),
         password=os.getenv("PGPASSWORD"),
+        cursor_factory=RealDictCursor,
         sslmode="require",
         channel_binding="require"
     )
-# PGHOST='ep-long-frog-a1asxc6t-pooler.ap-southeast-1.aws.neon.tech'
-# PGDATABASE='neondb'
-# PGUSER='neondb_owner'
-# PGPASSWORD='npg_k7mqBcDeMbs5'
-# PGSSLMODE='require'
-# PGCHANNELBINDING='require'

@@ -5,29 +5,18 @@ def authenticate_user(email, password, society_id=None):
     """
     Authenticate user with email and password.
     Optionally filter by society_id for SaaS multi-tenancy.
-    Special handling for master@estatehub.com
     """
-    # Special handling for master admin
-    if email == "master@estatehub.com":
-        # For master admin, we use a hardcoded password check for now
-        # In production, this should be stored securely
-        master_password = "admin123"  # You should change this to a secure password
-        if password == master_password:
-            return {
-                "user_id": 0,
-                "role": "admin",
-                "society_id": None,
-                "linked_id": None,
-                "login_method": "password",
-                "email": "master@estatehub.com"
-            }
-        else:
-            return None
 
     db = get_db()
     cur = db.cursor()
 
-    if society_id:
+    if email == "master@estatehub.com":
+        cur.execute("""
+            SELECT id, role, password_hash, society_id, linked_id, login_method
+            FROM users
+            WHERE email = %s
+        """, (email,))
+    elif society_id:
         cur.execute("""
             SELECT id, role, password_hash, society_id, linked_id, login_method
             FROM users
@@ -66,28 +55,18 @@ def authenticate_pin(email, pin, society_id=None):
     """
     Authenticate user with email and PIN.
     Optionally filter by society_id for SaaS multi-tenancy.
-    Special handling for master@estatehub.com
     """
-    # Special handling for master admin
-    if email == "master@estatehub.com":
-        # For master admin, we use a hardcoded PIN check for now
-        master_pin = "1234"  # You should change this to a secure PIN
-        if pin == master_pin:
-            return {
-                "user_id": 0,
-                "role": "admin",
-                "society_id": None,
-                "linked_id": None,
-                "login_method": "pin",
-                "email": "master@estatehub.com"
-            }
-        else:
-            return None
 
     db = get_db()
     cur = db.cursor()
 
-    if society_id:
+    if email == "master@estatehub.com":
+        cur.execute("""
+            SELECT id, role, pin_hash, society_id, linked_id, login_method
+            FROM users
+            WHERE email = %s
+        """, (email,))
+    elif society_id:
         cur.execute("""
             SELECT id, role, pin_hash, society_id, linked_id, login_method
             FROM users
@@ -126,28 +105,18 @@ def authenticate_pattern(email, pattern, society_id=None):
     """
     Authenticate user with email and 9-dot pattern.
     Optionally filter by society_id for SaaS multi-tenancy.
-    Special handling for master@estatehub.com
     """
-    # Special handling for master admin
-    if email == "master@estatehub.com":
-        # For master admin, we use a hardcoded pattern check for now
-        master_pattern = "123456789"  # You should change this to a secure pattern
-        if pattern == master_pattern:
-            return {
-                "user_id": 0,
-                "role": "admin",
-                "society_id": None,
-                "linked_id": None,
-                "login_method": "pattern",
-                "email": "master@estatehub.com"
-            }
-        else:
-            return None
 
     db = get_db()
     cur = db.cursor()
 
-    if society_id:
+    if email == "master@estatehub.com":
+        cur.execute("""
+            SELECT id, role, pattern_hash, society_id, linked_id, login_method
+            FROM users
+            WHERE email = %s
+        """, (email,))
+    elif society_id:
         cur.execute("""
             SELECT id, role, pattern_hash, society_id, linked_id, login_method
             FROM users

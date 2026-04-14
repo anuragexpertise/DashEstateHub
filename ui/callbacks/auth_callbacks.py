@@ -3,10 +3,9 @@ import dash
 from services.auth_service import (
     authenticate_user,
     authenticate_pin, 
-    authenticate_pattern,
-    get_societies,
-    get_society_details
+    authenticate_pattern
 )
+from services.society_service import get_societies, get_society_details
 from services.dashboard_service import get_dashboard_metrics
 
 from ui.pages.login import login_layout, society_login_layout
@@ -19,19 +18,6 @@ from ui.pages.security import security_layout
 
 
 def register_auth_callbacks(app):
-
-    # =========================================
-    # COOKIE MANAGER - Load saved email on load
-    # =========================================
-    @app.callback(
-        Output("cookie-store", "data"),
-        Input("url", "pathname"),
-        prevent_initial_call=True
-    )
-    def load_cookie(pathname):
-        """Load cookie data on app load"""
-        return {"loaded": True}
-
     # =========================================
     # SOCIETY SELECTION CALLBACK
     # =========================================
@@ -102,8 +88,8 @@ def register_auth_callbacks(app):
         
         # Store preferences in local cookie-store
         cookie_data = {"email": email, "society_id": society_id, "method": "pattern"} if remember else dash.no_update
-        
-        if user.get("user_id") == 0:
+
+        if user.get("role") == "admin" and user.get("society_id") is None:
             return user, "/master", {"type": "success", "message": "Master Admin Login"}, cookie_data
 
         role = user["role"]
@@ -120,6 +106,39 @@ def register_auth_callbacks(app):
             "type": "error",
             "message": "Unknown role"
         }, dash.no_update
+
+    # =========================================
+    # MASTER ADMIN LOGIN FROM NO SOCIETIES PAGE
+    # =========================================
+    @app.callback(
+        Output("session", "data", allow_duplicate=True),
+        Output("url", "pathname", allow_duplicate=True),
+        Output("toast-store", "data", allow_duplicate=True),
+        Output("cookie-store", "data", allow_duplicate=True),
+        Input("master-admin-login-btn", "n_clicks"),
+        State("master-admin-email", "value"),
+        State("master-admin-password", "value"),
+        prevent_initial_call=True
+    )
+    def master_admin_login(n_clicks, email, password):
+        if not email or not password:
+            return dash.no_update, dash.no_update, {
+                "type": "error",
+                "message": "Enter the master admin password."
+            }, dash.no_update
+
+        user = authenticate_user(email, password)
+        if not user or user.get("role") != "admin" or user.get("society_id") is not None:
+            return dash.no_update, dash.no_update, {
+                "type": "error",
+                "message": "Invalid master admin password."
+            }, dash.no_update
+
+        user["authenticated"] = True
+        return user, "/master", {
+            "type": "success",
+            "message": "Master admin authenticated. Please add a society."
+        }, {}
 
     # =========================================
     # SOCIETY LOGIN - PIN METHOD
@@ -158,8 +177,8 @@ def register_auth_callbacks(app):
         
         # Store preferences in local cookie-store
         cookie_data = {"email": email, "society_id": society_id, "method": "pin"} if remember else dash.no_update
-        
-        if user.get("user_id") == 0:
+
+        if user.get("role") == "admin" and user.get("society_id") is None:
             return user, "/master", {"type": "success", "message": "Master Admin Login"}, cookie_data
 
         role = user["role"]
@@ -214,8 +233,8 @@ def register_auth_callbacks(app):
         
         # Store preferences in local cookie-store
         cookie_data = {"email": email, "society_id": society_id, "method": "password"} if remember else dash.no_update
-        
-        if user.get("user_id") == 0:
+
+        if user.get("role") == "admin" and user.get("society_id") is None:
             return user, "/master", {"type": "success", "message": "Master Admin Login"}, cookie_data
 
         role = user["role"]
@@ -262,9 +281,7 @@ def register_auth_callbacks(app):
     )
     def route(pathname, session_data, cookie_data):
 
-        print("PATH:", pathname)
-        print("SESSION:", session_data)
-        print("COOKIE:", cookie_data)
+        print("ROUTER TRIGGERED: PATH:", pathname, "SESSION:", session_data, "COOKIE:", cookie_data)
 
         # 🔴 NOT LOGGED IN (no role field)
         if not session_data or "role" not in session_data:
@@ -283,9 +300,12 @@ def register_auth_callbacks(app):
                     # Fallback to society selection
                     try:
                         societies = get_societies()
+                        if not societies:
+                            return society_select_layout([], error_message="No societies found. Please contact support.", show_master_login=True), ""
                         return society_select_layout(societies), ""
-                    except:
-                        return society_select_layout([]), ""
+                    except Exception as err:
+                        print("Society load exception:", err)
+                        return society_select_layout([], error_message=f"Unable to load societies. DB error: {err}", show_master_login=False), ""
             
             # Check if we have cookie data with saved email and society
             elif cookie_data and cookie_data.get("email") and cookie_data.get("society_id"):
@@ -298,21 +318,27 @@ def register_auth_callbacks(app):
                         society_logo=society.get("logo"),
                         society_background=society.get("background")
                     ), ""
-                except:
+                except Exception as err:
                     # Fallback to society selection
                     try:
                         societies = get_societies()
+                        if not societies:
+                            return society_select_layout([], error_message="No societies found. Please contact support.", show_master_login=True), ""
                         return society_select_layout(societies), ""
-                    except:
-                        return society_select_layout([]), ""
+                    except Exception as err:
+                        print("Society load exception:", err)
+                        return society_select_layout([], error_message=f"Unable to load societies. DB error: {err}", show_master_login=False), ""
             
             else:
                 # First login - show society selection
                 try:
                     societies = get_societies()
+                    if not societies:
+                        return society_select_layout([], error_message="No societies found. Please contact support.", show_master_login=True), ""
                     return society_select_layout(societies), ""
-                except:
-                    return society_select_layout([]), ""
+                except Exception as err:
+                    print("Society load exception:", err)
+                    return society_select_layout([], error_message=f"Unable to load societies. DB error: {err}", show_master_login=False), ""
 
         # 🟢 LOGGED IN - Show navbar
         from ui.components.navbar import get_navbar
@@ -324,13 +350,13 @@ def register_auth_callbacks(app):
 
         # 🟢 MASTER ADMIN
         if pathname == "/master":
-            if user_id == 0:
+            if role == "admin" and society_id is None:
                 return master_layout(), navbar
             return "❌ Unauthorized", navbar
 
         # 🟢 SOCIETY ADMIN
         if pathname == "/admin":
-            if role == "admin" and user_id != 0:
+            if role == "admin" and society_id is not None:
                 try:
                     data = get_dashboard_metrics(society_id)
                     return admin_layout_dynamic(data), navbar
@@ -349,7 +375,7 @@ def register_auth_callbacks(app):
             return (security_layout() if role == "security" else "❌ Unauthorized"), navbar
 
         # 🔁 DEFAULT - Redirect to appropriate dashboard
-        if user_id == 0:
+        if role == "admin" and society_id is None:
             return master_layout(), navbar
         elif role == "admin":
             try:

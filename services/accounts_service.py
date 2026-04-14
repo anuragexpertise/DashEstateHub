@@ -15,22 +15,22 @@ def process_accounts_upload(contents, society_id):
     for _, row in df.iterrows():
         cur.execute("""
             INSERT INTO accounts (
-                society_id, ac_no, name, header,
-                parent_ac_no, dr_cr_type,
-                bf_flag, bf_value, depreciation, tab
+                society_id, name,tab_name, header,
+                parent_ac_id, dr_cr_account,
+                has_bf, bf_type, bf_amount, depreciation_percent, is_depreciable
             )
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
             society_id,
-            row['Ac No'],
             row['Name'],
+            row['Tab Name'],
             row['Header'],
             row['Hierarchy'],
             row['DrCrAc'],
             row['B/F?'],
             row['B/F'],
-            row['Depreciation'],
-            row['Tab']
+            row['Depreciation%'],
+            row['Depreciable?'],
         ))
 
     db.commit()

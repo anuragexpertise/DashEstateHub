@@ -5,7 +5,7 @@ User selects their society, email is stored in browser cookie for next visit
 from dash import html, dcc
 
 
-def society_select_layout(societies_list=None):
+def society_select_layout(societies_list=None, error_message=None, show_master_login=False):
     """
     Main society selection page shown on first login.
     
@@ -19,21 +19,36 @@ def society_select_layout(societies_list=None):
         societies_list = []
     
     options = [{"label": s.get("name", "Unknown"), "value": s.get("id")} for s in societies_list]
+    show_master_login = bool(show_master_login)
     
     return html.Div([
+        html.Div(
+            error_message or "",
+            className="society-select-error",
+            style={
+                "color": "#b33",
+                "backgroundColor": "rgba(255, 0, 0, 0.12)",
+                "padding": "12px 16px",
+                "borderRadius": "14px",
+                "marginBottom": "20px",
+                "display": "block" if error_message else "none",
+                "textAlign": "center",
+                "fontWeight": "600"
+            }
+        ),
         # Background overlay
-        html.Div(style={
-            "position": "fixed",
-            "top": "0",
-            "left": "0",
-            "width": "100%",
-            "height": "100%",
-            "backgroundImage": "url('/assets/estate_management_light.jpg')",
-            "backgroundSize": "cover",
-            "backgroundPosition": "center",
-            "filter": "brightness(0.6)",
-            "zIndex": "-1"
-        }),
+        # html.Div(style={
+        #     "position": "fixed",
+        #     "top": "0",
+        #     "left": "0",
+        #     "width": "100%",
+        #     "height": "100%",
+        #     "backgroundImage": "url('/assets/estate_management_light.jpg')",
+        #     "backgroundSize": "cover",
+        #     "backgroundPosition": "center",
+        #     "filter": "brightness(0.6)",
+        #     "zIndex": "-1"
+        # }),
 
         # Main card
         html.Div([
@@ -64,7 +79,7 @@ def society_select_layout(societies_list=None):
                             value=[],
                             style={"display": "inline-block"}
                         )
-                    ], style={"color": "rgba(255,255,255,0.8)", "fontSize": "0.95rem"})
+                    ], style={"color": "rgba(0,0,0,0.8)", "fontSize": "0.95rem"})
                 ], style={"marginBottom": "20px"}),
 
                 # Continue button
@@ -76,17 +91,52 @@ def society_select_layout(societies_list=None):
                 ),
 
                 # Master Admin Login button
-                html.Button(
-                    "Master Admin Login",
-                    id="master-admin-btn",
-                    className="btn-glass-secondary",
-                    style={"width": "100%", "marginBottom": "20px"}
-                ),
+                html.Div([
+                    html.P(
+                        "If no societies are configured, sign in as master admin to add the first society.",
+                        style={"color": "rgba(0,0,0,0.78)", "fontSize": "0.95rem", "marginBottom": "12px"}
+                    ),
+                    dcc.Input(
+                        id="master-admin-email",
+                        type="email",
+                        value="master@estatehub.com",
+                        readOnly=True,
+                        style={
+                            "width": "100%",
+                            "padding": "12px",
+                            "marginBottom": "12px",
+                            "borderRadius": "8px",
+                            "border": "none",
+                            "backgroundColor": "rgba(0,0,0,0.1)",
+                            "color": "#000"
+                        }
+                    ),
+                    dcc.Input(
+                        id="master-admin-password",
+                        type="password",
+                        placeholder="Master admin password",
+                        style={
+                            "width": "100%",
+                            "padding": "12px",
+                            "marginBottom": "12px",
+                            "borderRadius": "8px",
+                            "border": "none",
+                            "backgroundColor": "rgba(0,0,0,0.1)",
+                            "color": "#000"
+                        }
+                    ),
+                    html.Button(
+                        "Master Admin Login",
+                        id="master-admin-login-btn",
+                        className="btn-glass-secondary",
+                        style={"width": "100%", "marginBottom": "20px"}
+                    )
+                ], style={"display": "block" if show_master_login else "none"}),
 
                 # Help text
                 html.Div([
                     html.P("First time? Contact your society admin for access.", 
-                           style={"marginTop": "10px", "color": "rgba(255,255,255,0.6)", "fontSize": "0.9rem"})
+                           style={"marginTop": "10px", "color": "rgba(0,0,0,0.6)", "fontSize": "0.9rem"})
                 ])
             ], className="society-select-form")
         ], className="society-select-card glass")

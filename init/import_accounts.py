@@ -9,21 +9,21 @@ def import_accounts(file, society_id):
 
     for _, row in df.iterrows():
         cur.execute("""
-            INSERT INTO accounts
-            (society_id, account_number, name, header, parent_account_number,
-             tab_name, drcr_account, has_bf, bf_type, bf_amount,
-             depreciation_percent)
+            INSERT INTO accounts (
+                society_id, name,tab_name, header,
+                parent_ac_id, dr_cr_account,
+                has_bf, bf_type, bf_amount, depreciation_percent, is_depreciable
+            )
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
-            society_id,
-            row['Ac No'],
+                society_id,
             row['Name'],
+            row['Tab Name'],
             row['Header'],
             row['Hierarchy'],
-            row['Tab'],
             row['DrCrAc'],
             row['B/F?'],
-            row['DrCrBF'],
             row['B/F'],
-            row['Depreciation']
+            row['Depreciation%'],
+            row['Depreciable?'],
         ))
