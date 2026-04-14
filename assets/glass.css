@@ -1,0 +1,579 @@
+/* GLOBAL */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    color: #fff;
+    min-height: 100vh;
+}
+
+html,
+body,
+#react-entry-point {
+    height: 100%;
+}
+
+/* ============================== */
+/* GLASS MORPHISM BASE */
+/* ============================== */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================== */
+/* SOCIETY SELECTION PAGE */
+/* ============================== */
+.society-select-page {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.society-select-card {
+    width: 420px;
+    padding: 45px 35px;
+    animation: slideInUp 0.6s ease-out;
+}
+
+.society-select-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.society-select-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.society-select-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+.society-select-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.society-dropdown {
+    width: 100%;
+}
+
+.society-dropdown>div>input {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+    padding: 12px 16px !important;
+    border-radius: 10px !important;
+    font-size: 0.95rem !important;
+}
+
+.society-dropdown>div>input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Dropdown menu items */
+.society-dropdown .VirtualizedSelectFocusedOption,
+.society-dropdown .VirtualizedSelectOption {
+    background: #fff !important;
+    color: #000 !important;
+    padding: 10px 12px !important;
+}
+
+.society-dropdown .VirtualizedSelectOption:hover,
+.society-dropdown .VirtualizedSelectFocusedOption {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+}
+
+/* Dash dropdown menu styling */
+.dcc_combobox-popover {
+    background: #fff !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.dcc_combobox-option {
+    color: #000 !important;
+    padding: 10px 12px !important;
+    background: #fff !important;
+}
+
+.dcc_combobox-option:hover {
+    background: #f5f5f5 !important;
+    color: #000 !important;
+}
+
+/* Select Control Styling */
+.Select-control {
+    background: #fff !important;
+    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    border-radius: 10px !important;
+}
+
+.Select-input>input {
+    color: #000 !important;
+}
+
+.Select-menu-outer {
+    background: #fff !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    z-index: 1000 !important;
+    border-radius: 8px !important;
+}
+
+.Select-option {
+    color: #000 !important;
+    padding: 12px 15px !important;
+    background: #fff !important;
+}
+
+.Select-option:hover {
+    background: #f5f5f5 !important;
+    color: #000 !important;
+}
+
+.Select-option.is-selected {
+    background: #34d399 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+}
+
+.Select-option.is-focused {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+}
+
+/* React Select Dropdown */
+.react-select__control {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 10px !important;
+    padding: 4px !important;
+    color: #fff !important;
+    min-height: 42px !important;
+}
+
+.react-select__control:hover {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.react-select__control--is-focused {
+    border-color: #34d399 !important;
+    box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.1) !important;
+}
+
+.react-select__input {
+    color: #fff !important;
+}
+
+.react-select__menu {
+    background: #fff !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    z-index: 1000 !important;
+    margin-top: 8px !important;
+}
+
+.react-select__menu-list {
+    padding: 0 !important;
+}
+
+.react-select__option {
+    color: #000 !important;
+    padding: 12px 15px !important;
+    background: #fff !important;
+    font-weight: 500 !important;
+}
+
+.react-select__option:hover {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+}
+
+.react-select__option--is-selected {
+    background: #34d399 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+}
+
+.react-select__option--is-focused {
+    background: #e8f5e9 !important;
+    color: #000 !important;
+}
+
+.react-select__placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.react-select__single-value {
+    color: #fff !important;
+}
+
+.react-select__value-container {
+    color: #fff !important;
+}
+
+/* ============================== */
+/* LOGIN PAGE STYLES */
+/* ============================== */
+.society-login-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.society-logo {
+    max-height: 70px;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.login-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0;
+    color: #fff;
+}
+
+/* ============================== */
+/* TABS STYLING */
+/* ============================== */
+.dash-table--container .rc-virtual-list,
+.react-tabs {
+    background: transparent !important;
+}
+
+/* Tab list wrapper */
+.react-tabs__tab-list {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    display: flex !important;
+    gap: 5px !important;
+    padding: 0 !important;
+    margin: 0 0 20px 0 !important;
+}
+
+/* Individual tabs */
+.react-tabs__tab {
+    padding: 12px 16px !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.react-tabs__tab:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.react-tabs__tab--selected {
+    color: #34d399 !important;
+    border-bottom: 2px solid #34d399 !important;
+    background: transparent !important;
+}
+
+/* Tab content panel */
+.react-tabs__tab-panel {
+    background: transparent !important;
+    padding: 20px 0 !important;
+}
+
+.login-form-tab {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* ============================== */
+/* INPUT STYLING */
+/* ============================== */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    width: 100% !important;
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #fff !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+    font-family: inherit !important;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+    outline: none !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: #34d399 !important;
+    box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.1) !important;
+}
+
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="text"]::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ============================== */
+/* BUTTON STYLING */
+/* ============================== */
+button {
+    font-family: inherit !important;
+}
+
+.btn-glass {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(52, 211, 153, 0.3);
+}
+
+.btn-glass:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 211, 153, 0.4);
+}
+
+.btn-glass:active {
+    transform: translateY(0);
+}
+
+button[id*="login-btn"],
+button[id*="login-pin-btn"],
+button[id*="login-pattern-btn"],
+button[id*="society-select-btn"] {
+    width: 100% !important;
+    padding: 12px 16px !important;
+    border-radius: 10px !important;
+    border: none !important;
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+    color: #fff !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 4px 15px rgba(52, 211, 153, 0.3) !important;
+}
+
+button[id*="login-btn"]:hover,
+button[id*="login-pin-btn"]:hover,
+button[id*="login-pattern-btn"]:hover,
+button[id*="society-select-btn"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(52, 211, 153, 0.4) !important;
+}
+
+button[id*="logout-btn"] {
+    padding: 8px 16px !important;
+    background: rgba(220, 53, 69, 0.8) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    color: white !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+button[id*="logout-btn"]:hover {
+    background: rgba(220, 53, 69, 1) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* ============================== */
+/* CHECKBOX STYLING */
+/* ============================== */
+.dash-checklist-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dash-checklist-container input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    cursor: pointer !important;
+    accent-color: #34d399 !important;
+}
+
+/* ============================== */
+/* SIDEBAR/NAVBAR */
+/* ============================== */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.8);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.sidebar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #34d399;
+    margin-bottom: 10px;
+}
+
+.sidebar-subtitle {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+.nav-item {
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    display: block;
+    font-weight: 500;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #34d399;
+}
+
+.sidebar-footer {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================== */
+/* CONTENT AREA */
+/* ============================== */
+.content {
+    margin-left: 280px;
+    padding: 30px;
+}
+
+.no-sidebar .content {
+    margin-left: 0;
+}
+
+/* ============================== */
+/* CARDS & GRIDS */
+/* ============================== */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============================== */
+/* LINKS */
+/* ============================== */
+a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: #34d399;
+}
+
+/* ============================== */
+/* TOAST NOTIFICATIONS */
+/* ============================== */
+.toast-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.toast-error {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* ============================== */
+/* ANIMATIONS */
+/* ============================== */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

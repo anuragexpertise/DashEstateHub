@@ -6,6 +6,7 @@ def serve_layout():
         dcc.Location(id="url"),
         dcc.Store(id="session", storage_type="session"),
         dcc.Store(id="toast-store"),
+        dcc.Store(id="cookie-store", storage_type="local"),  # Persistent cookie storage
 
         # Toast
         html.Div(id="toast-container", style={
@@ -15,7 +16,7 @@ def serve_layout():
             "zIndex": "9999"
         }),
 
-        # Navbar
+        # Navbar (hidden during login)
         html.Div(id="navbar"),
 
         # Page content

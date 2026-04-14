@@ -6,8 +6,6 @@ from ui.callbacks.auth_callbacks import register_auth_callbacks
 from ui.callbacks.admin_callbacks import register_admin_callbacks
 from ui.callbacks.security_callbacks import register_security_callbacks
 from dotenv import load_dotenv
-from ui.components.navbar import get_navbar
-from dash.dependencies import Input, Output, State
 
 load_dotenv()
 server = Flask(__name__)
@@ -47,12 +45,7 @@ app = Dash(
 #         return f"DB ERROR: {str(e)}"
 
 # -----------------------------
-@app.callback(
-    Output("navbar", "children"),
-    Input("session", "data")
-)
-def update_navbar(session):
-    return get_navbar(session)
+# Navbar is now handled by the router callback in auth_callbacks.py
 app.layout = serve_layout()
 
 register_auth_callbacks(app)

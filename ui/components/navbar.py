@@ -1,4 +1,4 @@
-from dash import html
+from dash import html, dcc
 
 def get_navbar(session):
 
@@ -13,35 +13,46 @@ def get_navbar(session):
     # MASTER ADMIN
     if role == "admin" and society_id == 0:
         links += [
-            html.A("Dashboard", href="/master"),
-            html.A("Societies", href="/create-society"),
+            dcc.Link("Dashboard", href="/master", className="nav-item"),
+            dcc.Link("Societies", href="/create-society", className="nav-item"),
         ]
 
     elif role == "admin":
         links += [
-            html.A("Dashboard", href="/admin"),
-            html.A("Apartments", href="/apartments"),
-            html.A("Vendors", href="/vendors"),
-            html.A("Accounts", href="/accounts"),
+            dcc.Link("Dashboard", href="/admin", className="nav-item"),
+            dcc.Link("Apartments", href="/apartments", className="nav-item"),
+            dcc.Link("Vendors", href="/vendors", className="nav-item"),
+            dcc.Link("Accounts", href="/accounts", className="nav-item"),
         ]
 
     elif role == "security":
         links += [
-            html.A("Scan", href="/security"),
-            html.A("Attendance", href="/attendance"),
+            dcc.Link("Scan", href="/security", className="nav-item"),
+            dcc.Link("Attendance", href="/attendance", className="nav-item"),
         ]
 
     elif role == "vendor":
         links += [
-            html.A("Dashboard", href="/vendor"),
+            dcc.Link("Dashboard", href="/vendor", className="nav-item"),
         ]
 
     elif role == "apartment":
         links += [
-            html.A("My Dues", href="/apartment"),
+            dcc.Link("My Dues", href="/apartment", className="nav-item"),
         ]
 
-    links.append(html.A("Logout", href="/logout"))
+    links.append(html.Button(
+        "Logout",
+        id="logout-btn",
+        style={
+            "padding": "8px 16px",
+            "backgroundColor": "rgba(220, 53, 69, 0.8)",
+            "color": "white",
+            "border": "none",
+            "borderRadius": "5px",
+            "cursor": "pointer"
+        }
+    ))
 
     return html.Div(
         links,
@@ -49,10 +60,8 @@ def get_navbar(session):
             "display": "flex",
             "gap": "20px",
             "padding": "15px 30px",
-
             "background": "rgba(0,0,0,0.6)",
             "backdropFilter": "blur(10px)",
-
             "color": "white",
             "borderRadius": "10px",
             "marginBottom": "10px"
