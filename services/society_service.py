@@ -102,7 +102,7 @@ def get_societies():
     cur = db.cursor()
 
     cur.execute("""
-        SELECT id, name, city, created_at
+        SELECT id, name, created_at
         FROM societies
         ORDER BY id DESC
     """)
@@ -120,7 +120,7 @@ def get_society_details(society_id):
     cur = db.cursor()
 
     cur.execute("""
-        SELECT id, name, email, phone, address, logo, background
+        SELECT id, name, logo, address, email, phone, secretary_name, secretary_phone, secretary_sign, plan, plan_validity, arrear_start_date, login_background as background
         FROM societies
         WHERE id = %s
     """, (society_id,))

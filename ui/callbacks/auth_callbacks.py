@@ -277,27 +277,71 @@ def register_auth_callbacks(app):
         Output("navbar", "children"),
         Input("url", "pathname"),
         Input("session", "data"),
-        Input("cookie-store", "data")
+        Input("cookie-store", "data"),
+        Input("dummy", "data"),
+        prevent_initial_call=False
     )
     def route(pathname, session_data, cookie_data):
 
-        print("ROUTER TRIGGERED: PATH:", pathname, "SESSION:", session_data, "COOKIE:", cookie_data)
-
-        # 🔴 NOT LOGGED IN (no role field)
-        if not session_data or "role" not in session_data:
-            # User has selected a society but not logged in yet
-            if session_data and session_data.get("society_id"):
-                society_id = session_data.get("society_id")
-                try:
-                    society = get_society_details(society_id)
-                    return society_login_layout(
-                        society_name=society.get("name", "EstateHub"),
-                        society_logo=society.get("logo"),
-                        society_background=society.get("background")
-                    ), ""
-                except Exception as e:
-                    print("Error getting society details:", e)
-                    # Fallback to society selection
+        try:
+            print("ROUTER CALLED: pathname =", pathname, "session =", session_data, "cookie =", cookie_data)
+        
+            # 🔴 NOT LOGGED IN (no role field)
+            if not session_data or "role" not in session_data:
+                # User has selected a society but not logged in yet
+                if session_data and session_data.get("society_id"):
+                    society_id = session_data.get("society_id")
+                    try:
+                        society = get_society_details(society_id)
+                        return society_login_layout(
+                            society_name=society.get("name", "EstateHub") if society else "EstateHub",
+                            society_logo=society.get("logo") if society else None,
+                            society_background=society.get("background") if society else None
+                        ), ""
+                    except Exception as e:
+                        print("Error getting society details:", e)
+                        # Fallback to society selection
+                        try:
+                            societies = get_societies()
+                            if not societies:
+                                return society_select_layout([], error_message="No societies found. Please contact support.", show_master_login=True), ""
+                            return society_select_layout(societies), ""
+                        except Exception as err:
+                            print("Society load exception:", err)
+                            return html.Div([
+                                html.H2("Error Loading Societies"),
+                                html.P(f"Database Error: {str(err)}"),
+                                html.P("Please refresh the page or contact support.")
+                            ], style={"padding": "20px"}), ""
+                
+                # Check if we have cookie data with saved email and society
+                elif cookie_data and cookie_data.get("email") and cookie_data.get("society_id"):
+                    # Second login - user has saved society, go directly to society login
+                    society_id = cookie_data.get("society_id")
+                    try:
+                        society = get_society_details(society_id)
+                        return society_login_layout(
+                            society_name=society.get("name", "EstateHub") if society else "EstateHub",
+                            society_logo=society.get("logo") if society else None,
+                            society_background=society.get("background") if society else None
+                        ), ""
+                    except Exception as err:
+                        # Fallback to society selection
+                        try:
+                            societies = get_societies()
+                            if not societies:
+                                return society_select_layout([], error_message="No societies found. Please contact support.", show_master_login=True), ""
+                            return society_select_layout(societies), ""
+                        except Exception as err:
+                            print("Society load exception:", err)
+                            return html.Div([
+                                html.H2("Error Loading Societies"),
+                                html.P(f"Database Error: {str(err)}"),
+                                html.P("Please refresh the page or contact support.")
+                            ], style={"padding": "20px"}), ""
+                
+                else:
+                    # First login - show society selection
                     try:
                         societies = get_societies()
                         if not societies:
@@ -305,83 +349,64 @@ def register_auth_callbacks(app):
                         return society_select_layout(societies), ""
                     except Exception as err:
                         print("Society load exception:", err)
-                        return society_select_layout([], error_message=f"Unable to load societies. DB error: {err}", show_master_login=False), ""
-            
-            # Check if we have cookie data with saved email and society
-            elif cookie_data and cookie_data.get("email") and cookie_data.get("society_id"):
-                # Second login - user has saved society, go directly to society login
-                society_id = cookie_data.get("society_id")
-                try:
-                    society = get_society_details(society_id)
-                    return society_login_layout(
-                        society_name=society.get("name", "EstateHub"),
-                        society_logo=society.get("logo"),
-                        society_background=society.get("background")
-                    ), ""
-                except Exception as err:
-                    # Fallback to society selection
+                        return html.Div([
+                            html.H2("Error Loading Societies"),
+                            html.P(f"Database Error: {str(err)}"),
+                            html.P("Please refresh the page or contact support.")
+                        ], style={"padding": "20px"}), ""
+
+            # 🟢 LOGGED IN - Show navbar
+            from ui.components.navbar import get_navbar
+            navbar = get_navbar(session_data)
+
+            role = session_data.get("role")
+            user_id = session_data.get("user_id")
+            society_id = session_data.get("society_id")
+
+            # 🟢 MASTER ADMIN
+            if pathname == "/master":
+                if role == "admin" and society_id is None:
+                    return master_layout(), navbar
+                return "❌ Unauthorized", navbar
+
+            # 🟢 SOCIETY ADMIN
+            if pathname == "/admin":
+                if role == "admin" and society_id is not None:
                     try:
-                        societies = get_societies()
-                        if not societies:
-                            return society_select_layout([], error_message="No societies found. Please contact support.", show_master_login=True), ""
-                        return society_select_layout(societies), ""
-                    except Exception as err:
-                        print("Society load exception:", err)
-                        return society_select_layout([], error_message=f"Unable to load societies. DB error: {err}", show_master_login=False), ""
-            
-            else:
-                # First login - show society selection
-                try:
-                    societies = get_societies()
-                    if not societies:
-                        return society_select_layout([], error_message="No societies found. Please contact support.", show_master_login=True), ""
-                    return society_select_layout(societies), ""
-                except Exception as err:
-                    print("Society load exception:", err)
-                    return society_select_layout([], error_message=f"Unable to load societies. DB error: {err}", show_master_login=False), ""
+                        data = get_dashboard_metrics(society_id)
+                        return admin_layout_dynamic(data), navbar
+                    except Exception as e:
+                        return html.Div(f"Dashboard Error: {str(e)}"), navbar
+                return "❌ Unauthorized", navbar
 
-        # 🟢 LOGGED IN - Show navbar
-        from ui.components.navbar import get_navbar
-        navbar = get_navbar(session_data)
+            # 🟢 OTHER ROLES
+            if pathname == "/apartment":
+                return (apartment_layout() if role == "apartment" else "❌ Unauthorized"), navbar
 
-        role = session_data.get("role")
-        user_id = session_data.get("user_id")
-        society_id = session_data.get("society_id")
+            if pathname == "/vendor":
+                return (vendor_layout() if role == "vendor" else "❌ Unauthorized"), navbar
 
-        # 🟢 MASTER ADMIN
-        if pathname == "/master":
+            if pathname == "/security":
+                return (security_layout() if role == "security" else "❌ Unauthorized"), navbar
+
+            # 🔁 DEFAULT - Redirect to appropriate dashboard
             if role == "admin" and society_id is None:
                 return master_layout(), navbar
-            return "❌ Unauthorized", navbar
-
-        # 🟢 SOCIETY ADMIN
-        if pathname == "/admin":
-            if role == "admin" and society_id is not None:
+            elif role == "admin":
                 try:
                     data = get_dashboard_metrics(society_id)
                     return admin_layout_dynamic(data), navbar
-                except Exception as e:
-                    return html.Div(f"Dashboard Error: {str(e)}"), navbar
-            return "❌ Unauthorized", navbar
-
-        # 🟢 OTHER ROLES
-        if pathname == "/apartment":
-            return (apartment_layout() if role == "apartment" else "❌ Unauthorized"), navbar
-
-        if pathname == "/vendor":
-            return (vendor_layout() if role == "vendor" else "❌ Unauthorized"), navbar
-
-        if pathname == "/security":
-            return (security_layout() if role == "security" else "❌ Unauthorized"), navbar
-
-        # 🔁 DEFAULT - Redirect to appropriate dashboard
-        if role == "admin" and society_id is None:
-            return master_layout(), navbar
-        elif role == "admin":
-            try:
-                data = get_dashboard_metrics(society_id)
-                return admin_layout_dynamic(data), navbar
-            except:
-                return login_layout(), ""
-        
-        return login_layout(), ""
+                except:
+                    return login_layout(), ""
+            
+            return login_layout(), ""
+            
+        except Exception as e:
+            print(f"CRITICAL ROUTER ERROR: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return html.Div([
+                html.H2("Critical Error"),
+                html.P(f"An unexpected error occurred: {str(e)}"),
+                html.P("Please contact support.")
+            ], style={"padding": "20px"}), ""
