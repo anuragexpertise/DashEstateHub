@@ -4,7 +4,7 @@ def serve_layout():
     return html.Div([
 
         dcc.Location(id="url"),
-        dcc.Store(id="session", storage_type="session"),
+        dcc.Store(id="session", storage_type="memory"),
         dcc.Store(id="toast-store"),
         dcc.Store(id="cookie-store", storage_type="local"),  # Persistent cookie storage
         dcc.Store(id="dummy", data="init"),  # Dummy store to trigger initial callback
@@ -21,7 +21,10 @@ def serve_layout():
         html.Div(id="navbar"),
 
         # Page content
-        html.Div(id="page-content")
+        html.Div(id="page-content"),
+        
+        # Include push notification script
+        html.Script(src="/assets/push.js")
 
     ],
     style={
