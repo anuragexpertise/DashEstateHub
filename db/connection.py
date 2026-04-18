@@ -14,5 +14,6 @@ def get_db():
         password=os.getenv("PGPASSWORD"),
         cursor_factory=RealDictCursor,
         sslmode="require",
+        connect_timeout=5,
         # channel_binding="require"
     )

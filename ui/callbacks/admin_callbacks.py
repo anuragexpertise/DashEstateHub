@@ -5,7 +5,7 @@ from services.society_service import create_society_full, get_societies
 def register_admin_callbacks(app):
 
     @app.callback(
-        Output("society-list", "children"),
+        Output("society-list", "children", allow_duplicate=True),
         Input("create-society-btn", "n_clicks"),
         State("soc-name", "value"),
         State("soc-email", "value"),
@@ -16,7 +16,8 @@ def register_admin_callbacks(app):
         State("soc-plan-validity", "date"),
         State("soc-arrear-date", "date"),
         State("admin-email", "value"),
-        State("admin-password", "value")
+        State("admin-password", "value"),
+        prevent_initial_call='initial_duplicate',
     )
     def create_soc(n, name, email, phone, address, sec_name, sec_phone, validity, arrear, admin_email, admin_password):
         if not n:
@@ -54,7 +55,7 @@ def register_admin_callbacks(app):
         return process_accounts_upload(contents, society_id)
     
     @app.callback(
-        Output("society-list", "children"),
+        Output("society-list", "children", allow_duplicate=True),
         Input("create-soc-btn", "n_clicks"),
         State("soc-name", "value"),
         State("soc-email", "value"),

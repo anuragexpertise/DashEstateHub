@@ -278,7 +278,7 @@ def register_auth_callbacks(app):
         Input("url", "pathname"),
         Input("session", "data"),
         Input("cookie-store", "data"),
-        Input("dummy", "data"),
+        Input("dummy", "data"), # Ensure dcc.Store(id="dummy") exists in app.layout
         prevent_initial_call=False
     )
     def route(pathname, session_data, cookie_data):
@@ -396,10 +396,15 @@ def register_auth_callbacks(app):
                 try:
                     data = get_dashboard_metrics(society_id)
                     return admin_layout_dynamic(data), navbar
-                except:
-                    return login_layout(), ""
+                except Exception as e:
+                    print(f"Admin Dashboard Load Error: {e}")
+                    return html.Div([
+                        html.H3("Error loading dashboard"),
+                        html.P("Please check your database connection.")
+                    ], style={"color": "white", "padding": "20px"}), navbar
             
-            return login_layout(), ""
+            # Fallback if no specific route matched
+            return login_layout(), navbar
             
         except Exception as e:
             print(f"CRITICAL ROUTER ERROR: {str(e)}")

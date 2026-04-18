@@ -3,6 +3,7 @@ from db import get_db
 
 MASTER_EMAIL = "master@estatehub.com"
 MASTER_PASSWORD = "Master@1234"
+MASTER_PIN ="123456"
 
 db = get_db()
 cur = db.cursor()
@@ -16,20 +17,20 @@ cur.execute("""
 master_user = cur.fetchone()
 
 hashed_password = generate_password_hash(MASTER_PASSWORD)
-
+hashed_pin = generate_password_hash(MASTER_PIN)
 if master_user:
     print(f"Updating password for existing master admin: {MASTER_EMAIL}")
     cur.execute("""
         UPDATE users
-        SET password_hash = %s
+        SET password_hash = %s, pin_hash = %s
         WHERE email = %s
-    """, (hashed_password, MASTER_EMAIL))
+    """, (hashed_password, hashed_pin, MASTER_EMAIL))
 else:
     print(f"Creating master admin user: {MASTER_EMAIL}")
     cur.execute("""
-        INSERT INTO users (society_id, email, password_hash, role, linked_id)
-        VALUES (%s, %s, %s, %s, %s)
-    """, (None, MASTER_EMAIL, hashed_password, "admin", None))
+        INSERT INTO users (society_id, email, password_hash, pin_hash, role, linked_id)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (None, MASTER_EMAIL, hashed_password, hashed_pin, "admin", None))
 
 db.commit()
 cur.close()

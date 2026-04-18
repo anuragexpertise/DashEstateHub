@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
-from auth.jwt_utils import create_access_token, create_refresh_token, verify_refresh_token, require_auth
+from auth.jwt_utils import create_access_token, create_refresh_token, verify_refresh_token, require_auth, verify_token
 from services.auth_service import authenticate_user
+from auth.push_utils import register_push_subscription
 from db import get_db
 import os
 
@@ -96,8 +97,31 @@ def refresh_access_token():
         return jsonify({"error": "Token refresh failed"}), 500
 
 
+@auth_bp.route("/vapid-public-key", methods=["GET"])
+def get_vapid_public_key():
+    """Return the VAPID public key for push notifications."""
+    public_key = os.getenv("VAPID_PUBLIC")
+    if not public_key:
+        return jsonify({"error": "VAPID public key not configured"}), 500
+    return jsonify({"vapid_public_key": public_key}), 200
+
+
+@auth_bp.route("/register-push", methods=["POST"])
+@require_auth
+def register_push():
+    """Register a user's push subscription."""
+    try:
+        subscription = request.get_json()
+        user = request.user
+        register_push_subscription(user.get("user_id"), subscription)
+        return jsonify({"message": "Push subscription registered successfully"}), 200
+    except Exception as e:
+        print(f"Error in register-push: {e}")
+        return jsonify({"error": "Failed to register subscription"}), 500
+
+
 @auth_bp.route("/verify-token", methods=["POST"])
-def verify_token():
+def verify_token_route():
     """
     Verify if a token is valid (no expiration).
     
@@ -110,8 +134,7 @@ def verify_token():
         if not token:
             return jsonify({"valid": False}), 401
         
-        from auth.jwt_utils import verify_token as verify
-        payload = verify(token)
+        payload = verify_token(token)
         
         if not payload:
             return jsonify({"valid": False}), 401
