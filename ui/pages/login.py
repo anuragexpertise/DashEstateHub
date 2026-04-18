@@ -51,7 +51,8 @@ def login_layout():
     ])
 
 
-def society_login_layout(society_name="EstateHub", society_logo=None, society_background=None, saved_email=None, default_method="password"):
+
+def society_login_layout(society_name="EstateHub", society_logo=None, society_background=None, prefill_email=None, default_method="password"):
     """
     Society-specific login page - Second step in two-stage login.
     Shows society logo and background, with tabbed login methods.
@@ -60,7 +61,8 @@ def society_login_layout(society_name="EstateHub", society_logo=None, society_ba
         society_name: Name of the society
         society_logo: URL to society logo image
         society_background: URL to society background image
-    
+        prefill_email: Email address to pre-fill in the email field
+        default_method: The login method to display by default
     Returns:
         Dash layout component
     """
@@ -111,7 +113,7 @@ def society_login_layout(society_name="EstateHub", society_logo=None, society_ba
                                     id="login-email",
                                     type="email",
                                     placeholder="Email",
-                                    value=saved_email,
+                                    value=prefill_email,
                                     style=INPUT_STYLE
                                 ),
                                 dcc.Input(
@@ -145,7 +147,7 @@ def society_login_layout(society_name="EstateHub", society_logo=None, society_ba
                                     id="login-email-pin",
                                     type="email",
                                     placeholder="Email",
-                                    value=saved_email,
+                                    value=prefill_email,
                                     style=INPUT_STYLE
                                 ),
                                 dcc.Input(
@@ -179,7 +181,7 @@ def society_login_layout(society_name="EstateHub", society_logo=None, society_ba
                                     id="login-email-pattern",
                                     type="email",
                                     placeholder="Email",
-                                    value=saved_email,
+                                    value=prefill_email,
                                     style=INPUT_STYLE
                                 ),
                                 dcc.Input(
