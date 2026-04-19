@@ -1,0 +1,197 @@
+You are a senior full-stack SaaS architect and Python developer.
+
+Your task is to generate a production-ready web application using:
+
+- Backend: Flask (modular, scalable)
+- Frontend: Dash (Plotly Dash with Bootstrap + glassmorphism UI)
+- Database: PostgreSQL (NeonDB cloud)
+- ORM: SQLAlchemy
+- Authentication: Flask-Login + role-based access control
+- Deployment target: ApexWeave (Linux hosting, similar to Render)
+
+The application is called "ApexEstateHub" — a multi-tenant estate management SaaS platform.
+
+--------------------------------------------------
+CORE REQUIREMENTS
+--------------------------------------------------
+
+1. ARCHITECTURE
+- Use clean modular architecture:
+  /app
+    /models
+    /routes
+    /services
+    /dash_apps
+    /templates
+    /static
+    config.py
+    __init__.py
+
+- Separate Flask server and Dash app properly (server = Flask, UI = Dash mounted)
+
+- Use environment variables:
+  individual parameters.. done
+  SECRET_KEY
+
+- Ensure compatibility with ApexWeave:
+  - Gunicorn entry point
+  - No blocking loops
+  - Minimal memory footprint
+
+--------------------------------------------------
+2. DATABASE DESIGN (NeonDB PostgreSQL)
+
+Design normalized schema based on dashestatehub.sql:
+
+Ensure:
+- relationships
+- indexing
+- migrations ready
+
+--------------------------------------------------
+3. AUTHENTICATION SYSTEM
+
+- Login system (Flask-Login)
+- Role-based routing to their respective portals:
+  Admin → full access
+  Owner → limited
+  Security → scanner
+  Contractor → passes
+
+- Session persistence
+- Password hashing (Werkzeug)
+
+--------------------------------------------------
+4. DASH UI (GLASSMORPHISM DESIGN)
+
+Create visually modern UI:
+- blurred cards
+- transparent panels
+- soft shadows
+- responsive layout
+
+Use Dash Bootstrap Components.
+
+--------------------------------------------------
+5. ROLE-BASED DASH PORTALS
+header, sidebar, navbar crumbs, content, footer. Layout can be changed by Admin-Settings
+
+Role based content:
+# --- Layout Constants for sidebar tabs and their path_name
+ROLE_CONFIG = {
+    'admin': {'color': '#ADD8E6', 'label': 'Admin Portal', 'tabs': [
+        ('Dashboard', '/admin-portal', 'fa-th-large'),
+        ('Cashbook', '/cashbook', 'fa-book'),
+        ('Receipts', '/receipts', 'fa-file-invoice-dollar'),
+        ('Expenses', '/expenses', 'fa-wallet'),
+        ('Enroll', '/enroll', 'fa-user-plus'),
+        ('Users', '/users', 'fa-users'),
+        ('Events', '/events', 'fa-calendar-alt'),
+        ('Evaluate Pass', '/evaluate-pass', 'fa-qrcode'),
+        ('Customize', '/customize', 'fa-edit'),
+        ('Settings', '/settings', 'fa-cog'),
+    ]},
+    'apartment': {'color': '#90EE90', 'label': 'Owner Portal', 'tabs': [
+        ('Dashboard', '/owner-portal', 'fa-th-large'),
+        ('Cashbook', '/owner-cashbook', 'fa-book'),
+        ('Payments', '/payments', 'fa-credit-card'),
+        ('Charges', '/charges', 'fa-file-invoice'),
+        ('Events', '/owner-events', 'fa-calendar-alt'),
+        ('Settings', '/owner-settings', 'fa-cog'),
+    ]},
+    'vendor': {'color': '#FFFF00', 'label': 'Vendor Portal', 'tabs': [
+        ('Dashboard', '/vendor-portal', 'fa-th-large'),
+        ('Cashbook', '/vendor-cashbook', 'fa-book'),
+        ('Payments', '/vendor-payments', 'fa-credit-card'),
+        ('Charges', '/vendor-charges', 'fa-file-invoice'),
+        ('Events', '/vendor-events', 'fa-calendar-alt'),
+        ('Settings', '/vendor-settings', 'fa-cog'),
+    ]},
+    'security': {'color': '#F08080', 'label': 'Security Portal', 'tabs': [
+        ('Pass Evaluation', '/pass-evaluation', 'fa-qrcode'),
+        ('Attendance', '/attendance', 'fa-clock'),
+        ('Events', '/security-events', 'fa-calendar-alt'),
+        ('New Receipt', '/security-receipt', 'fa-plus-circle'),
+        ('Users', '/security-users', 'fa-users'),
+        ('Settings', '/security-settings', 'fa-cog'),
+    ]}
+}
+--------------------------------------------------
+6. QR CODE SYSTEM
+
+- Generate QR per user
+- Store as base64 or file
+- Validation logic:
+  If dues pending → FAIL
+  else → PASS
+
+--------------------------------------------------
+7. BUSINESS LOGIC
+
+- Maintenance auto calculation:
+  apartment_size * rate
+
+- Late fee:
+  % based
+
+- Daily fine:
+  incremental
+
+- Payment verification workflow:
+  pending → verified → update cashbook
+
+--------------------------------------------------
+8. API LAYER
+
+Create Flask routes:
+Use JSON responses.
+
+--------------------------------------------------
+9. DEPLOYMENT (IMPORTANT)
+
+Prepare for ApexWeave:
+
+- requirements.txt
+- Procfile:
+  web: gunicorn app:server
+
+- Use:
+  server = app.server (Dash integration)
+
+- Use psycopg2-binary
+
+- Add config for NeonDB:
+  sslmode=require
+
+--------------------------------------------------
+10. OUTPUT FORMAT
+
+Generate:
+
+1. Full folder structure
+2. All Python files
+3. requirements.txt
+4. Procfile
+5. .env is done already
+6. Step-by-step deployment guide for ApexWeave
+7. Instructions to connect NeonDB
+
+--------------------------------------------------
+11. CODE QUALITY
+
+- Clean, commented code
+- Avoid placeholders wherever possible
+- Working MVP (not pseudo-code)
+- Use reusable components
+
+--------------------------------------------------
+12. Essentials
+
+- Add drag-and-drop layout placeholders
+- Add basic CSV upload logic
+- Add pagination in tables
+
+--------------------------------------------------
+
+IMPORTANT:
+This is NOT a demo. Generate a REAL working SaaS MVP that can be deployed immediately.
